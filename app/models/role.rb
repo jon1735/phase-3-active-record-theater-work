@@ -3,14 +3,20 @@ class Role < ActiveRecord::Base
   has_many :auditions
 
   def actors
-    auditions.map do |audition|
-      audition.actor
-    end
+    auditions.pluck(:actor)
   end
 
   def locations
-    auditions.map do |audition|
-      audition.location
-    end
+    auditions.pluck(:locations)
+  end
+
+  def lead
+    actor = auditions.find_by(hired: true)
+    actor ? actor : "no actor has been hired for this role"
+  end
+
+  def understudy
+    actor = auditions.where(hired: true).second
+    actor ? actor : "no actor has been hired for this role"
   end
 end
